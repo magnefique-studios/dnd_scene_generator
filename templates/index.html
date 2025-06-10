@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Image Generator</h1>
+        <p>Enter a prompt to generate an image using Amazon Bedrock</p>
+        
+        <div class="input-container">
+            <textarea id="prompt-input" placeholder="Describe the image you want to create..."></textarea>
+            <button id="generate-btn">Generate Image</button>
+        </div>
+        
+        <div class="result-container">
+            <div id="loading" class="hidden">Generating image, please wait...</div>
+            <div id="error" class="hidden"></div>
+            <div id="result" class="hidden">
+                <h2>Generated Image</h2>
+                <img id="generated-image" src="" alt="Generated image will appear here">
+                <div class="prompt-display">
+                    <h3>Prompt used:</h3>
+                    <p id="used-prompt"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
