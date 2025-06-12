@@ -1,0 +1,3 @@
+Prompt: Create a 2D top down view of a 3d scene. The scene is an indoor scene  in Dungeons and Dragons the setting the entrance area of a castle. There should be large red carpeting and torches in this entry hallway. The camera should face the ground at 90 degree angle.
+Negative Prompt: monsters characters
+Model: stability.stable-diffusion-xl-v1

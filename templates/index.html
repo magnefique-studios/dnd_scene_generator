@@ -26,6 +26,16 @@
                         <label for="prompt-input">Prompt:</label>
                         <textarea id="prompt-input" placeholder="Describe the image you want to create..."></textarea>
                     </div>
+                    <div class="reference-image-controls">
+                        <div class="checkbox-field">
+                            <input type="checkbox" id="use-previous-image" name="use-previous-image">
+                            <label for="use-previous-image">Use previous image as reference</label>
+                        </div>
+                        <div class="upload-field">
+                            <label for="image-upload">Or upload an image:</label>
+                            <input type="file" id="image-upload" accept="image/*">
+                        </div>
+                    </div>
                     <div class="prompt-field">
                         <label for="negative-prompt-input">Negative Prompt:</label>
                         <textarea id="negative-prompt-input" placeholder="Describe what you don't want in the image (optional)..."></textarea>

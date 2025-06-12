@@ -4,6 +4,7 @@ import base64
 import json
 import os
 from io import BytesIO
+from PIL import Image
 
 app = Flask(__name__)
 
@@ -16,6 +17,24 @@ bedrock_runtime = boto3.client(
 @app.route('/')
 def index():
     return render_template('index.html')
+
+def resize_base64_image(base64_string, target_width, target_height):
+    """Resize a base64 encoded image to the specified dimensions."""
+    try:
+        # Decode base64 string to image
+        image_data = base64.b64decode(base64_string)
+        img = Image.open(BytesIO(image_data))
+        
+        # Resize the image
+        img = img.resize((target_width, target_height), Image.LANCZOS)
+        
+        # Convert back to base64
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        return base64.b64encode(buffered.getvalue()).decode('utf-8')
+    except Exception as e:
+        print(f"Error resizing image: {str(e)}")
+        return base64_string  # Return original if resize fails
 
 @app.route('/generate-image', methods=['POST'])
 def generate_image():
@@ -31,6 +50,14 @@ def generate_image():
         model_id = model_choice
         
         negative_prompt = data.get('negative_prompt', '')
+        init_image = data.get('init_image')  # Get the initial image if provided
+        
+        # Define target dimensions based on model - using 1024x1024 for all models for compatibility
+        target_width, target_height = 1024, 1024
+        
+        # Resize init_image if provided
+        if init_image:
+            init_image = resize_base64_image(init_image, target_width, target_height)
         
         if model_id == "stability.stable-diffusion-xl-v1":
             # Prepare request body for Stable Diffusion XL with max size (1024x1024)
@@ -54,39 +81,88 @@ def generate_image():
                     "text": negative_prompt,
                     "weight": -1.0
                 })
+            
+            # Add init image if provided
+            if init_image:
+                request_body["init_image"] = init_image
+                request_body["init_image_mode"] = "IMAGE_STRENGTH"
+                request_body["image_strength"] = 0.35  # Adjust strength as needed
                 
         elif model_id == "amazon.titan-image-generator-v1":
-            # Prepare request body for AWS Titan Text-to-Image v1 with max size (1408x1408)
-            request_body = {
-                "taskType": "TEXT_IMAGE",
-                "textToImageParams": {
-                    "text": prompt,
-                    "negativeText": negative_prompt if negative_prompt else "none",
-                },
-                "imageGenerationConfig": {
-                    "numberOfImages": 1,
-                    "height": 1408,
-                    "width": 1408,
-                    "cfgScale": 8.0,
-                    "seed": 0
+            # Determine task type based on whether an initial image is provided
+            task_type = "IMAGE_VARIATION" if init_image else "TEXT_IMAGE"
+            
+            if task_type == "TEXT_IMAGE":
+                # Text-to-image request
+                request_body = {
+                    "taskType": "TEXT_IMAGE",
+                    "textToImageParams": {
+                        "text": prompt,
+                        "negativeText": negative_prompt if negative_prompt else "none",
+                    },
+                    "imageGenerationConfig": {
+                        "numberOfImages": 1,
+                        "height": 1024,
+                        "width": 1024,
+                        "cfgScale": 8.0,
+                        "seed": 0
+                    }
                 }
-            }
+            else:
+                # Image variation request
+                request_body = {
+                    "taskType": "IMAGE_VARIATION",
+                    "imageVariationParams": {
+                        "text": prompt,
+                        "negativeText": negative_prompt if negative_prompt else "none",
+                        "images": [init_image]
+                    },
+                    "imageGenerationConfig": {
+                        "numberOfImages": 1,
+                        "height": 1024,
+                        "width": 1024,
+                        "cfgScale": 8.0,
+                        "seed": 0
+                    }
+                }
+                
         elif model_id == "amazon.titan-image-generator-v2:0":
-            # Prepare request body for AWS Titan Text-to-Image v2
-            request_body = {
-                "taskType": "TEXT_IMAGE",
-                "textToImageParams": {
-                    "text": prompt,
-                    "negativeText": negative_prompt if negative_prompt else "none",
-                },
-                "imageGenerationConfig": {
-                    "numberOfImages": 1,
-                    "height": 1024,
-                    "width": 1024,
-                    "cfgScale": 8.0,
-                    "seed": 0
+            # Determine task type based on whether an initial image is provided
+            task_type = "IMAGE_VARIATION" if init_image else "TEXT_IMAGE"
+            
+            if task_type == "TEXT_IMAGE":
+                # Text-to-image request
+                request_body = {
+                    "taskType": "TEXT_IMAGE",
+                    "textToImageParams": {
+                        "text": prompt,
+                        "negativeText": negative_prompt if negative_prompt else "none",
+                    },
+                    "imageGenerationConfig": {
+                        "numberOfImages": 1,
+                        "height": 1024,
+                        "width": 1024,
+                        "cfgScale": 8.0,
+                        "seed": 0
+                    }
                 }
-            }
+            else:
+                # Image variation request
+                request_body = {
+                    "taskType": "IMAGE_VARIATION",
+                    "imageVariationParams": {
+                        "text": prompt,
+                        "negativeText": negative_prompt if negative_prompt else "none",
+                        "images": [init_image]
+                    },
+                    "imageGenerationConfig": {
+                        "numberOfImages": 1,
+                        "height": 1024,
+                        "width": 1024,
+                        "cfgScale": 8.0,
+                        "seed": 0
+                    }
+                }
         else:
             return jsonify({'error': 'Invalid model selection'}), 400
         

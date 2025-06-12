@@ -233,3 +233,40 @@ button:disabled {
     display: flex;
     justify-content: flex-end;
 }
+/* Checkbox field styling */
+.checkbox-field {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-field input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.checkbox-field label {
+    font-weight: bold;
+}
+/* Reference image controls styling */
+.reference-image-controls {
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.upload-field {
+    margin-top: 10px;
+}
+
+.upload-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#image-upload {
+    width: 100%;
+    padding: 5px;
+}

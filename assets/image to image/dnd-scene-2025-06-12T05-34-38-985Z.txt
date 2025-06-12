@@ -1,0 +1,3 @@
+Prompt: Create a top down view of a 2D top down view of a 3d scene. The scene is an outdoor scene  in Dungeons and Dragons the setting is a forrest.. Please make a clear entryway.
+Negative Prompt: lights characters monsters
+Model: amazon.titan-image-generator-v1

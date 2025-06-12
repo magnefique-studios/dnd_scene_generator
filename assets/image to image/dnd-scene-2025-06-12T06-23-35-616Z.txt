@@ -1,0 +1,3 @@
+Prompt: Prompt: Create a top down view of a 2D top down view of a 3d scene. The scene is an outdoor scene  in Dungeons and Dragons the setting is a snowy mountain. the area should snow covered  with pine trees and rock walls. large enough for a party of 4 to enter and another party of 4 to be in there.Please make a clear entryway.
+Negative Prompt: monsters characters
+Model: amazon.titan-image-generator-v2:0
