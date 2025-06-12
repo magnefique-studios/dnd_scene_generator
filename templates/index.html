@@ -3,28 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image Generator</title>
+    <title>D&D Scene Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>AI Image Generator</h1>
+        <h1>D&D Scene Generator</h1>
         <p>Enter a prompt to generate an image using Amazon Bedrock</p>
         
-        <div class="input-container">
-            <textarea id="prompt-input" placeholder="Describe the image you want to create..."></textarea>
-            <button id="generate-btn">Generate Image</button>
-        </div>
-        
-        <div class="result-container">
-            <div id="loading" class="hidden">Generating image, please wait...</div>
-            <div id="error" class="hidden"></div>
-            <div id="result" class="hidden">
-                <h2>Generated Image</h2>
-                <img id="generated-image" src="" alt="Generated image will appear here">
-                <div class="prompt-display">
-                    <h3>Prompt used:</h3>
-                    <p id="used-prompt"></p>
+        <div class="app-layout">
+            <div class="left-panel">
+                <div class="input-container">
+                    <div class="model-selection">
+                        <label for="model-select">Select Model:</label>
+                        <select id="model-select">
+                            <option value="stability.stable-diffusion-xl-v1">Stable Diffusion XL</option>
+                            <option value="amazon.titan-image-generator-v1">AWS Titan Text-to-Image v1</option>
+                            <option value="amazon.titan-image-generator-v2:0">AWS Titan Text-to-Image v2</option>
+                        </select>
+                    </div>
+                    <div class="prompt-field">
+                        <label for="prompt-input">Prompt:</label>
+                        <textarea id="prompt-input" placeholder="Describe the image you want to create..."></textarea>
+                    </div>
+                    <div class="prompt-field">
+                        <label for="negative-prompt-input">Negative Prompt:</label>
+                        <textarea id="negative-prompt-input" placeholder="Describe what you don't want in the image (optional)..."></textarea>
+                    </div>
+                    <button id="generate-btn">Generate Image</button>
+                    
+                    <div id="loading" class="hidden">Generating image, please wait...</div>
+                    <div id="error" class="hidden"></div>
+                    
+                    <div class="prompt-display hidden" id="prompt-display">
+                        <h3>Prompt used:</h3>
+                        <p id="used-prompt"></p>
+                        <h3>Negative prompt used:</h3>
+                        <p id="used-negative-prompt"></p>
+                        <div class="save-controls">
+                            <button id="save-btn" class="hidden">Save Image & Prompt</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div id="result" class="hidden">
+                    <img id="generated-image" src="" alt="">
                 </div>
             </div>
         </div>
