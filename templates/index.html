@@ -40,6 +40,13 @@
                         <label for="negative-prompt-input">Negative Prompt:</label>
                         <textarea id="negative-prompt-input" placeholder="Describe what you don't want in the image (optional)..."></textarea>
                     </div>
+                    <div class="seed-field">
+                        <label for="seed-input">Seed:</label>
+                        <div class="seed-controls">
+                            <input type="number" id="seed-input" value="0" min="0" max="4294967295">
+                            <button id="random-seed-btn" type="button">Random</button>
+                        </div>
+                    </div>
                     <button id="generate-btn">Generate Image</button>
                     
                     <div id="loading" class="hidden">Generating image, please wait...</div>

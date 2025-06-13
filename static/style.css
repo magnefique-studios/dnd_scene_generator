@@ -270,3 +270,36 @@ button:disabled {
     width: 100%;
     padding: 5px;
 }
+/* Seed field styling */
+.seed-field {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.seed-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.seed-controls {
+    display: flex;
+    gap: 10px;
+}
+
+#seed-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#random-seed-btn {
+    width: auto;
+    padding: 8px 15px;
+    background-color: #6c757d;
+}
+
+#random-seed-btn:hover {
+    background-color: #5a6268;
+}

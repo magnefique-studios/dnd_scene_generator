@@ -51,13 +51,18 @@ def generate_image():
         
         negative_prompt = data.get('negative_prompt', '')
         init_image = data.get('init_image')  # Get the initial image if provided
+        use_previous_image = data.get('use_previous_image', False)  # Flag to control image-to-image generation
+        seed = data.get('seed', 0)  # Get seed value, default to 0 if not provided
         
         # Define target dimensions based on model - using 1024x1024 for all models for compatibility
         target_width, target_height = 1024, 1024
         
-        # Resize init_image if provided
-        if init_image:
+        # Resize init_image if provided and explicitly requested to use it
+        if init_image and use_previous_image:
             init_image = resize_base64_image(init_image, target_width, target_height)
+        else:
+            # If not explicitly requested to use the image, set it to None
+            init_image = None
         
         if model_id == "stability.stable-diffusion-xl-v1":
             # Prepare request body for Stable Diffusion XL with max size (1024x1024)
@@ -70,7 +75,7 @@ def generate_image():
                 ],
                 "cfg_scale": 7,
                 "steps": 30,
-                "seed": 0,
+                "seed": seed,
                 "width": 1024,
                 "height": 1024
             }
@@ -82,23 +87,21 @@ def generate_image():
                     "weight": -1.0
                 })
             
-            # Add init image if provided
+            # Add init image if provided and explicitly requested
             if init_image:
                 request_body["init_image"] = init_image
                 request_body["init_image_mode"] = "IMAGE_STRENGTH"
                 request_body["image_strength"] = 0.35  # Adjust strength as needed
                 
         elif model_id == "amazon.titan-image-generator-v1":
-            # Determine task type based on whether an initial image is provided
-            task_type = "IMAGE_VARIATION" if init_image else "TEXT_IMAGE"
-            
-            if task_type == "TEXT_IMAGE":
-                # Text-to-image request
+            if init_image:
+                # Image variation request
                 request_body = {
-                    "taskType": "TEXT_IMAGE",
-                    "textToImageParams": {
+                    "taskType": "IMAGE_VARIATION",
+                    "imageVariationParams": {
                         "text": prompt,
                         "negativeText": negative_prompt if negative_prompt else "none",
+                        "images": [init_image]
                     },
                     "imageGenerationConfig": {
                         "numberOfImages": 1,
@@ -109,13 +112,12 @@ def generate_image():
                     }
                 }
             else:
-                # Image variation request
+                # Text-to-image request
                 request_body = {
-                    "taskType": "IMAGE_VARIATION",
-                    "imageVariationParams": {
+                    "taskType": "TEXT_IMAGE",
+                    "textToImageParams": {
                         "text": prompt,
                         "negativeText": negative_prompt if negative_prompt else "none",
-                        "images": [init_image]
                     },
                     "imageGenerationConfig": {
                         "numberOfImages": 1,
@@ -127,16 +129,14 @@ def generate_image():
                 }
                 
         elif model_id == "amazon.titan-image-generator-v2:0":
-            # Determine task type based on whether an initial image is provided
-            task_type = "IMAGE_VARIATION" if init_image else "TEXT_IMAGE"
-            
-            if task_type == "TEXT_IMAGE":
-                # Text-to-image request
+            if init_image:
+                # Image variation request
                 request_body = {
-                    "taskType": "TEXT_IMAGE",
-                    "textToImageParams": {
+                    "taskType": "IMAGE_VARIATION",
+                    "imageVariationParams": {
                         "text": prompt,
                         "negativeText": negative_prompt if negative_prompt else "none",
+                        "images": [init_image]
                     },
                     "imageGenerationConfig": {
                         "numberOfImages": 1,
@@ -147,13 +147,12 @@ def generate_image():
                     }
                 }
             else:
-                # Image variation request
+                # Text-to-image request
                 request_body = {
-                    "taskType": "IMAGE_VARIATION",
-                    "imageVariationParams": {
+                    "taskType": "TEXT_IMAGE",
+                    "textToImageParams": {
                         "text": prompt,
                         "negativeText": negative_prompt if negative_prompt else "none",
-                        "images": [init_image]
                     },
                     "imageGenerationConfig": {
                         "numberOfImages": 1,

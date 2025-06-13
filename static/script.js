@@ -5,6 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
         usePreviousImageCheckbox.checked = false;
     }
     
+    // Set up random seed button
+    const seedInput = document.getElementById('seed-input');
+    const randomSeedBtn = document.getElementById('random-seed-btn');
+    
+    randomSeedBtn.addEventListener('click', () => {
+        // Generate a random integer between 0 and 4294967295 (2^32 - 1)
+        const randomSeed = Math.floor(Math.random() * 4294967296);
+        seedInput.value = randomSeed;
+    });
+    
     // Handle file uploads
     const imageUploadInput = document.getElementById('image-upload');
     let uploadedImageData = null;
@@ -49,10 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Prepare request data
+            const seedValue = parseInt(document.getElementById('seed-input').value) || 0;
             const requestData = {
                 prompt,
                 negative_prompt: negativePrompt,
-                model: selectedModel
+                model: selectedModel,
+                seed: seedValue
             };
             
             // Check for uploaded image first (takes precedence)
@@ -103,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveBtn.dataset.prompt = prompt;
             saveBtn.dataset.negativePrompt = negativePrompt || 'None';
             saveBtn.dataset.model = selectedModel;
+            saveBtn.dataset.seed = seedValue;
             
             // Hide loading, show result and prompt display
             loadingElement.classList.add('hidden');
@@ -151,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.removeChild(imageLink);
                 
                 // Create text content
-                const textContent = `Prompt: ${prompt}\nNegative Prompt: ${negativePrompt}\nModel: ${model}`;
+                const textContent = `Prompt: ${prompt}\nNegative Prompt: ${negativePrompt}\nModel: ${model}\nSeed: ${this.dataset.seed}`;
                 
                 // Save text file after a small delay
                 setTimeout(() => {

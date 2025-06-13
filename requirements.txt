@@ -1,4 +1,8 @@
-flask==2.3.3
-boto3==1.28.57
-Werkzeug==2.3.7
-gunicorn==21.2.0
+flask
+pillow
+torch==2.0.1+cu118
+torchvision==0.15.2+cu118
+diffusers==0.21.4
+transformers
+accelerate
+xformers==0.0.20
